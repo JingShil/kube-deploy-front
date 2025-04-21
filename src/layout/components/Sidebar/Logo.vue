@@ -3,11 +3,11 @@
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 v-else class="sidebar-title">{{ title }} </h1>
+        <!-- <h1 v-else class="sidebar-title">{{ title }} </h1> -->
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 class="sidebar-title">{{ title }} </h1>
+        <!-- <h1 class="sidebar-title">{{ title }} </h1> -->
       </router-link>
     </transition>
   </div>
@@ -24,8 +24,8 @@ export default {
   },
   data() {
     return {
-      title: 'Vue Element Admin',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      title: 'K3s云原生平台',
+      logo: require('@/assets/k8s_images/Vue Router 导航守卫逻辑.png')
     }
   }
 }
@@ -46,7 +46,8 @@ export default {
   width: 100%;
   height: 50px;
   line-height: 50px;
-  background: #2b2f3a;
+  background-image: linear-gradient(to right, #698097, #2f599c);
+  // background: #2b2f3a;
   text-align: center;
   overflow: hidden;
 
@@ -55,7 +56,7 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
+      // width: 100px;
       height: 32px;
       vertical-align: middle;
       margin-right: 12px;

@@ -45,8 +45,12 @@
             <el-dropdown-item>Docs</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
+            <span style="display:block;">解绑集群</span>
+          </el-dropdown-item>
+          <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">{{ $t('navbar.logOut') }}</span>
           </el-dropdown-item>
+
         </el-dropdown-menu>
       </el-dropdown>
     </div>

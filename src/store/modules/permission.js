@@ -7,10 +7,14 @@ import { asyncRoutes, constantRoutes } from '@/router'
  */
 function hasPermission(roles, route) {
   if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.includes(role))
-  } else {
-    return true
+    // 提取用户角色name集合（如 ['operation']）
+    const userRoleNames = roles.map(role => role.name)
+
+    // 检查路由要求的角色是否存在于用户角色中
+    return route.meta.roles.some(requiredRole =>
+      userRoleNames.includes(requiredRole))
   }
+  return true // 无角色要求的路由默认放行
 }
 
 /**

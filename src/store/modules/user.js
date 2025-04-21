@@ -7,7 +7,9 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
-  roles: []
+  roles: [],
+  email: '',
+  permissions: ''
 }
 
 const mutations = {
@@ -23,6 +25,12 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
+  SET_EMAIL: (state, email) => {
+    state.email = email
+  },
+  SET_PERMISSIONS: (state, permissions) => {
+    state.permissions = permissions
+  },
   SET_ROLES: (state, roles) => {
     state.roles = roles
   }
@@ -35,10 +43,15 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        console.log(response)
+        // console.log(data.roles)
+        commit('SET_TOKEN', data)
+        // commit('SET_AVATAR', avatar)
+        // commit('SET_INTRODUCTION', introduction)
+        setToken(data)
         resolve()
       }).catch(error => {
+        console.log(error)
         reject(error)
       })
     })
@@ -46,25 +59,26 @@ const actions = {
 
   // get user info
   getInfo({ commit, state }) {
+    // console.log(state.token)
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-
         if (!data) {
           reject('Verification failed, please Login again.')
         }
 
-        const { roles, name, avatar, introduction } = data
+        // const { roles, name, avatar, introduction } = data
 
         // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
+        if (!data.roles || data.roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
 
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        commit('SET_INTRODUCTION', introduction)
+        // commit('SET_TOKEN', data.token)
+        commit('SET_ROLES', data.roles)
+        commit('SET_NAME', data.username)
+        commit('SET_EMAIL', data.email)
+        commit('SET_PERMISSIONS', data.permissions)
         resolve(data)
       }).catch(error => {
         reject(error)

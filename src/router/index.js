@@ -7,10 +7,6 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -73,38 +69,13 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/home',
     children: [
       {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/documentation',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'documentation', icon: 'documentation', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: { title: 'guide', icon: 'guide', noCache: true }
+        path: 'home',
+        component: () => import('@/views/home/index'),
+        name: 'Home',
+        meta: { title: '首页', icon: 'el-icon-s-home', affix: true }
       }
     ]
   },
@@ -130,268 +101,238 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/permission',
+    path: '/k8s',
     component: Layout,
-    redirect: '/permission/page',
+    redirect: '/k8s/cluster',
     alwaysShow: true, // will always show the root menu
-    name: 'Permission',
+    name: 'ClusterManage',
     meta: {
-      title: 'permission',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      title: '集群管理',
+      icon: 'el-icon-s-platform',
+      requiresCluster: true
     },
     children: [
       {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'PagePermission',
+        path: 'cluster/unbind',
+        component: () => import('@/views/k8s/ClusterUnbound.vue'),
+        name: 'K8sClusterUnbind',
+        hidden: true,
         meta: {
-          title: 'pagePermission',
-          roles: ['admin'] // or you can only set roles in sub nav
+          title: '未绑定集群'
         }
       },
       {
-        path: 'directive',
-        component: () => import('@/views/permission/directive'),
+        path: 'cluster/bind',
+        component: () => import('@/views/k8s/BindCluster.vue'),
+        name: 'K8sClusterBind',
+        hidden: true,
+        meta: {
+          title: '绑定集群'
+        }
+      },
+      {
+        path: 'cluster',
+        component: () => import('@/views/k8s/cluster'),
+        name: 'K8sCluster',
+        meta: {
+          title: '集群概述'
+        }
+      },
+      {
+        path: 'component',
+        component: () => import('@/views/k8s/components/index'), // Parent router-view
+        name: '组件管理',
+        meta: { title: '组件管理' },
+        redirect: '/k8s/components/node',
+        children: [
+          {
+            path: 'node',
+            component: () => import('@/views/k8s/components/node'),
+            name: 'Node',
+            meta: { title: 'Node' }
+          },
+          {
+            path: 'namespace',
+            component: () => import('@/views/k8s/components/namespace'),
+            name: 'Namespace',
+            meta: { title: 'Namespace' }
+          },
+          {
+            path: 'deployment',
+            component: () => import('@/views/k8s/components/deployment'),
+            name: 'Deployment',
+            meta: { title: 'Deployment' }
+          },
+          {
+            path: 'pod',
+            component: () => import('@/views/k8s/components/pod'),
+            name: 'Pod',
+            meta: { title: 'Pod' }
+          },
+          {
+            path: 'service',
+            component: () => import('@/views/k8s/components/service'),
+            name: 'Service',
+            meta: { title: 'Service' }
+          }
+        ]
+
+      }
+    ]
+  },
+  {
+    path: '/app',
+    component: Layout,
+    redirect: '/app/application',
+    alwaysShow: true, // will always show the root menu
+    name: 'Application',
+    meta: {
+      title: '应用管理',
+      icon: 'el-icon-menu',
+      requiresCluster: true
+    },
+    children: [
+      {
+        path: 'application',
+        component: () => import('@/views/app/application'),
+        name: 'Application',
+        meta: {
+          title: '应用管理'
+        }
+      },
+      {
+        path: 'instance',
+        component: () => import('@/views/app/instance'),
+        name: 'ApplicationInstance',
+        meta: {
+          title: '应用实例管理'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'deploy',
+        component: () => import('@/views/app/deploy'),
+        hidden: true,
+        name: 'ApplicationInstanceDeploy',
+        meta: {
+          title: '应用实例部署'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'ops',
+        component: () => import('@/views/app/ops.vue'),
+        hidden: true,
+        name: 'ApplicationInstanceOps',
+        meta: {
+          title: '应用实例运维'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'image',
+        component: () => import('@/views/app/image'),
+        name: 'ApplicationImage',
+        meta: {
+          title: '镜像管理'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: '/app/instance/create',
+        component: () => import('@/views/app/create-instance/MainFrame.vue'),
+        hidden: true,
+        name: '创建应用实例',
+        meta: { title: '创建应用实例' }
+      },
+      {
+        path: '/app/instance/update',
+        component: () => import('@/views/app/create-instance/MainFrame.vue'),
+        hidden: true,
+        name: '更新应用实例',
+        meta: { title: '更新应用实例' }
+      },
+      // {
+      //   path: '/app/instance/create',
+      //   component: () => import('@/views/app/create-instance/InstanceCreate.vue'),
+      //   redirect: '/app/instance/create/basic',
+      //   hidden: true, // 如果不想在侧边栏显示
+      //   meta: { title: '创建应用', icon: 'form' },
+      //   children: [
+      //     {
+      //       path: 'basic',
+      //       component: () => import('@/views/app/create-instance/AppCreateBasic.vue'),
+      //       name: 'CreateAppBasic',
+      //       meta: { title: '基础信息', activeMenu: '/create-app' }
+      //     },
+      //     {
+      //       path: 'deployment',
+      //       component: () => import('@/views/app/create-instance/AppCreateDeployment.vue'),
+      //       name: 'CreateAppDeployment',
+      //       meta: { title: 'Deployment配置', activeMenu: '/create-app' },
+      //       hidden: true
+      //     },
+      //     {
+      //       path: 'service',
+      //       component: () => import('@/views/app/create-instance/AppCreateService.vue'),
+      //       name: 'CreateAppService',
+      //       meta: { title: 'Service配置', activeMenu: '/create-app' },
+      //       hidden: true
+      //     }
+      //   ]
+      // },
+      {
+        path: '/app/instance/detail',
+        component: () => import('@/views/app/detail-instance/AppDetail.vue'),
+        name: '应用实例详情',
+        hidden: true, // 如果不想在侧边栏显示
+        meta: {
+          title: '应用实例详情'
+          // if do not set roles, means: this page does not require permission
+        }
+      }
+    ]
+  },
+  {
+    path: '/permission',
+    component: Layout,
+    redirect: '/permission/describe',
+    alwaysShow: true, // will always show the root menu
+    name: 'ClusterManage',
+    meta: {
+      title: '权限管理',
+      icon: 'peoples'
+    },
+    children: [
+      {
+        path: 'describe',
+        component: () => import('@/views/permission/describe'),
         name: 'DirectivePermission',
         meta: {
-          title: 'directivePermission'
+          title: '权限说明'
           // if do not set roles, means: this page does not require permission
         }
       },
       {
         path: 'role',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
+        component: () => import('@/views/permission/index'),
+        name: 'PagePermission',
         meta: {
-          title: 'rolePermission',
-          roles: ['admin']
+          title: '角色权限'
         }
       }
-    ]
-  },
 
-  {
-    path: '/icon',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/icons/index'),
-        name: 'Icons',
-        meta: { title: 'icons', icon: 'icon', noCache: true }
-      }
-    ]
-  },
-
-  /** when your routing map is too long, you can split it into small modules **/
-  componentsRouter,
-  chartsRouter,
-  nestedRouter,
-  tableRouter,
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
-    meta: {
-      title: 'example',
-      icon: 'el-icon-s-help'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import('@/views/example/create'),
-        name: 'CreateArticle',
-        meta: { title: 'createArticle', icon: 'edit' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/example/edit'),
-        name: 'EditArticle',
-        meta: { title: 'editArticle', noCache: true, activeMenu: '/example/list' },
-        hidden: true
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleList',
-        meta: { title: 'articleList', icon: 'list' }
-      }
-    ]
-  },
-
-  {
-    path: '/tab',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/tab/index'),
-        name: 'Tab',
-        meta: { title: 'tab', icon: 'tab' }
-      }
-    ]
-  },
-
-  {
-    path: '/error',
-    component: Layout,
-    redirect: 'noRedirect',
-    name: 'ErrorPages',
-    meta: {
-      title: 'errorPages',
-      icon: '404'
-    },
-    children: [
-      {
-        path: '401',
-        component: () => import('@/views/error-page/401'),
-        name: 'Page401',
-        meta: { title: 'page401', noCache: true }
-      },
-      {
-        path: '404',
-        component: () => import('@/views/error-page/404'),
-        name: 'Page404',
-        meta: { title: 'page404', noCache: true }
-      }
-    ]
-  },
-
-  {
-    path: '/error-log',
-    component: Layout,
-    children: [
-      {
-        path: 'log',
-        component: () => import('@/views/error-log/index'),
-        name: 'ErrorLog',
-        meta: { title: 'errorLog', icon: 'bug' }
-      }
-    ]
-  },
-
-  {
-    path: '/excel',
-    component: Layout,
-    redirect: '/excel/export-excel',
-    name: 'Excel',
-    meta: {
-      title: 'excel',
-      icon: 'excel'
-    },
-    children: [
-      {
-        path: 'export-excel',
-        component: () => import('@/views/excel/export-excel'),
-        name: 'ExportExcel',
-        meta: { title: 'exportExcel' }
-      },
-      {
-        path: 'export-selected-excel',
-        component: () => import('@/views/excel/select-excel'),
-        name: 'SelectExcel',
-        meta: { title: 'selectExcel' }
-      },
-      {
-        path: 'export-merge-header',
-        component: () => import('@/views/excel/merge-header'),
-        name: 'MergeHeader',
-        meta: { title: 'mergeHeader' }
-      },
-      {
-        path: 'upload-excel',
-        component: () => import('@/views/excel/upload-excel'),
-        name: 'UploadExcel',
-        meta: { title: 'uploadExcel' }
-      }
-    ]
-  },
-
-  {
-    path: '/zip',
-    component: Layout,
-    redirect: '/zip/download',
-    alwaysShow: true,
-    name: 'Zip',
-    meta: { title: 'zip', icon: 'zip' },
-    children: [
-      {
-        path: 'download',
-        component: () => import('@/views/zip/index'),
-        name: 'ExportZip',
-        meta: { title: 'exportZip' }
-      }
-    ]
-  },
-
-  {
-    path: '/pdf',
-    component: Layout,
-    redirect: '/pdf/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/pdf/index'),
-        name: 'PDF',
-        meta: { title: 'pdf', icon: 'pdf' }
-      }
     ]
   },
   {
-    path: '/pdf/download',
-    component: () => import('@/views/pdf/download'),
-    hidden: true
-  },
-
-  {
-    path: '/theme',
+    path: '/operation-log',
     component: Layout,
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/theme/index'),
-        name: 'Theme',
-        meta: { title: 'theme', icon: 'theme' }
-      }
-    ]
-  },
-
-  {
-    path: '/clipboard',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/clipboard/index'),
-        name: 'ClipboardDemo',
-        meta: { title: 'clipboardDemo', icon: 'clipboard' }
-      }
-    ]
-  },
-
-  {
-    path: '/i18n',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/i18n-demo/index'),
-        name: 'I18n',
-        meta: { title: 'i18n', icon: 'international' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://github.com/PanJiaChen/vue-element-admin',
-        meta: { title: 'externalLink', icon: 'link' }
+        path: 'operation-log',
+        component: () => import('@/views/operation-log/index'),
+        name: '操作日志',
+        meta: { title: '操作日志', icon: 'form', noCache: true }
       }
     ]
   },
